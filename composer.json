@@ -3,12 +3,12 @@
   "description" : "Sibers API Bundle for creating RESTful API",
   "version" : "1.0.0",
   "type" : "symfony-bundle",
-  "homepage": "https://git.sibers.com/php-internal/sibers-api-bundle",
+  "homepage": "https://github.com/awersatos/sibers-api-bundle",
   "license" : "MIT",
   "keywords" : ["sibers", "sibers bundle"],
   "authors" : [{
     "name" : "Alexander Gordeychik",
-    "email" : " alexander.gordeychik@sibers.com"
+    "email" : "sanya.gordejchik@gmail.com"
   }],
   "require" : {
     "php": ">=7.0",
