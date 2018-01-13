@@ -1,7 +1,7 @@
 {
   "name" : "sibers/sibers-api-bundle",
   "description" : "Sibers API Bundle for creating RESTful API",
-  "version" : "1.0.0",
+  "version" : "1.0.3",
   "type" : "symfony-bundle",
   "homepage": "https://github.com/awersatos/sibers-api-bundle",
   "license" : "MIT",
