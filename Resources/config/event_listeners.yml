@@ -7,6 +7,7 @@ services:
 
     sibers_api.request_subscriber:
         class: Sibers\ApiBundle\EventListener\RequestEventSubscriber
+        arguments: ['%sibers_api.login_route%']
         tags:
             - { name: kernel.event_subscriber }
 
