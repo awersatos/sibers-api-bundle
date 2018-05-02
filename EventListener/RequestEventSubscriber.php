@@ -16,7 +16,7 @@ class RequestEventSubscriber implements EventSubscriberInterface
     /**
      * @param string $loginRoute
      */
-    public function __construct(string $loginRoute)
+    public function __construct($loginRoute)
     {
         $this->loginRoute = $loginRoute;
     }
