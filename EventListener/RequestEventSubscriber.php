@@ -42,18 +42,21 @@ class RequestEventSubscriber implements EventSubscriberInterface
         $currentRoute = $request->attributes->get('_route');
 
         if ($currentRoute === $this->loginRoute) {
-            $headers = $request->headers->all();
+            $contentType = $request->headers->get('content-type', null, false);
 
-            if (!isset($headers['content-type'])) {
-                $headers['content-type'] = [];
+            $idx = false;
+            foreach ($contentType as $key => $value) {
+                if ($value === 'application/json' || 0 === strpos($value, 'application/json;')) {
+                    $idx = $key;
+                    break ;
+                }
             }
 
-            $idx = array_search('application/json', $headers['content-type']);
             if ($idx !== false) {
                 $data = json_decode($request->getContent(), true);
                 $event->getRequest()->request->replace($data);
-                $headers['content-type'][$idx] = 'application/x-www-form-urlencoded';
-                $event->getRequest()->headers->replace($headers);
+                $contentType[$idx] = 'application/x-www-form-urlencoded';
+                $event->getRequest()->headers->set('content-type', $contentType);
             }
         }
     }
