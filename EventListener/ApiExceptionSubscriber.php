@@ -13,8 +13,10 @@ use Sibers\ApiBundle\Exceptions\SibersApiException;
 /**
  * {@inheritdoc}
  */
-class ApiExceptionSubscriber implements EventSubscriberInterface
+final class ApiExceptionSubscriber implements EventSubscriberInterface
 {
+    const BASE_API_PATH = '/api';
+
     /**
      * @var ErrorHandler
      */
@@ -43,7 +45,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
      */
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
-        if (strpos($event->getRequest()->getPathInfo(), '/api') !== 0) {
+        if (strpos($event->getRequest()->getPathInfo(), self::BASE_API_PATH) !== 0) {
             return;
         }
 
