@@ -1,30 +1,36 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jedi
- * Date: 19.11.17
- * Time: 1:28
- */
 
 namespace Sibers\ApiBundle\EventListener;
 
+use Sibers\ApiBundle\Service\ErrorHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Sibers\ApiBundle\Exceptions\SibersApiException;
 
+/**
+ * {@inheritdoc}
+ */
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var ErrorHandler
+     */
     private $errorHandler;
 
     /**
-     * ResponseEventListener constructor.
+     * @param ErrorHandler $errorHandler
      */
-    public function __construct($errorHandler)
+    public function __construct(ErrorHandler $errorHandler)
     {
         $this->errorHandler = $errorHandler;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
         return [
@@ -32,6 +38,9 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param GetResponseForExceptionEvent $event
+     */
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         if (strpos($event->getRequest()->getPathInfo(), '/api') !== 0) {
@@ -39,17 +48,20 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         }
 
         $e = $event->getException();
-
         if($e instanceof SibersApiException){
             $event->setResponse($e->getResponce());
             return;
         }
 
-        $message = $e->getMessage();
-        $code = $e->getCode();
-        $status = $e->getStatusCode();
-        $trace = $e->getTraceAsString();
+        $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
+        if ($e instanceof HttpExceptionInterface) {
+            $statusCode = $e->getStatusCode();
+        }
 
-        $event->setResponse($this->errorHandler->getResponse($status, $code, $message, $trace));
+        $message = $e->getMessage();
+        $code    = $e->getCode();
+        $trace   = $e->getTraceAsString();
+
+        $event->setResponse($this->errorHandler->getResponse($statusCode, $code, $message, $trace));
     }
 }
