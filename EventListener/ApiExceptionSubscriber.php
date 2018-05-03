@@ -16,6 +16,7 @@ use Sibers\ApiBundle\Exceptions\SibersApiException;
 final class ApiExceptionSubscriber implements EventSubscriberInterface
 {
     const BASE_API_PATH = '/api';
+    const ENV_PROD = 'prod';
 
     /**
      * @var ErrorHandler
@@ -23,11 +24,18 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
     private $errorHandler;
 
     /**
-     * @param ErrorHandler $errorHandler
+     * @var string
      */
-    public function __construct(ErrorHandler $errorHandler)
+    private $env;
+
+    /**
+     * @param ErrorHandler $errorHandler
+     * @param string       $env
+     */
+    public function __construct(ErrorHandler $errorHandler, $env)
     {
         $this->errorHandler = $errorHandler;
+        $this->env          = $env;
     }
 
     /**
@@ -62,8 +70,12 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
 
         $message = $e->getMessage();
         $code    = $e->getCode();
-        $trace   = $e->getTraceAsString();
 
-        $event->setResponse($this->errorHandler->getResponse($statusCode, $code, $message, $trace));
+        $stackTrace = null;
+        if (self::ENV_PROD !== $this->env) {
+            $stackTrace = $e->getTraceAsString();
+        }
+
+        $event->setResponse($this->errorHandler->getResponse($statusCode, $code, $message, $stackTrace));
     }
 }
