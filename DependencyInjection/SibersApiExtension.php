@@ -21,10 +21,12 @@ class SibersApiExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+        $container->setParameter('sibers_api.login_route', $config['login_route']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('event_listeners.yml');
+
 
        /* $def = $container->getDefinition('sibers_api.error_handler');
         $def->replaceArgument(0, $config['errors']);*/
